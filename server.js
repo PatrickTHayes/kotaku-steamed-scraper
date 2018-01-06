@@ -18,6 +18,7 @@ var db = require("./models");
 // db.on("error", function(error) {
 //   console.log("Database Error:", error);
 // });
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/steamed2"; //for connecting to heroku, instert this var 2 lines down
 mongoose.Promise = Promise;
 mongoose.connect("mongodb://localhost/steamed2", {
   useMongoClient: true
