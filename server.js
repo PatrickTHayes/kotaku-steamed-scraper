@@ -8,7 +8,7 @@ var mongoose = require("mongoose");
 var logger = require("morgan");
 // Initialize Express
 var app = express();
-
+var PORT = process.env.PORT || 8080;
 // Database configuration
 //var databaseUrl = "steamed";
 //var collections = ["articles"];
@@ -76,20 +76,26 @@ app.get("/scrape",function (req,res){
   
     $("h1.headline").each(function(i, element) {
   
-      var link = $(element).children().attr("href");
+      let link = $(element).children().attr("href");
       var title = $(element).children().text();
       var content =$(element).closest(".post-item-frontpage").children(".item__content").children(".excerpt").children().text();
+      let imgLink =$(element).closest(".post-item-frontpage").children(".item__content").children(".asset").children().children().children().children(".lazyload").attr("src")
+      //find($('.lazyload'));
+      //children(".item__content").children(".asset").children().children(".img-wrapper").children().children(".lazyloaded").attr("src");
       var result= {
         link:link,
         title:title,
-        content:content
+        content:content,
+        imgLink:imgLink
       }
+      console.log(result)
       //mongoose code for db
       db.Article
         .create(result)
         .then(function(dbArticle) {
+          
           // If we were able to successfully scrape and save an Article, send a message to the client
-          res.send("Scrape Complete");
+          
         })
         .catch(function(err) {
           // If an error occurred, send it to the client
@@ -107,10 +113,15 @@ app.get("/scrape",function (req,res){
   console.log("finished updating db");
   //res.redirect("/all");
   });
-  
+  res.redirect("/");
 })
-
-
-app.listen(8080, function() {
-  console.log("App running on port 8080!");
+app.post("/update/:id", function(req,res){
+  console.log("update route hit")
+  db.Article.findByIdAndUpdate(req.params.id, { $set: { note: req.body.note }}, { new: true }, function (err, Article) {
+    if (err) return (err);
+    res.send(Article);
+  });
+})
+app.listen(PORT, function() {
+  console.log("App running on port: "+ PORT );
 });

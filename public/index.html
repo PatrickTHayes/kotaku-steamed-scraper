@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Login</title>
+    <title>Home</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 </head>
@@ -12,24 +13,92 @@
         <div class="nav-wrapper">
             <a href="#" class="brand-logo">(Logo)</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="#" class="navlinks">articles Json</a></li>
-                <li><a href="#" class="navlinks">notes Json</a></li>
-                <li><a href="#" class="navlinks">articles with their notes</a></li>
-                <li><a href="#" class="navlinks">home pages</a></li>
-                <li><a href="#" class="navlinks">scrape</a></li>
+                <li><a href="/articles" class="navlinks">articles Json</a></li>
+                <li><a href="/notes" class="navlinks">notes Json</a></li>
+                <li><a href="/articles/notes" class="navlinks">articles with their notes</a></li>
+                <li><a href="/" class="navlinks">home pages</a></li>
+                <li><a href="/scrape" class="navlinks">scrape</a></li>
             </ul>
         </div>
     </nav>
-    <main>
-        
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="js/materialize.min.js"></script>
-
-    </main>
-    <div class="container">
-        © 2018 Pat Hayes
+<main>
+    <div class="container"> <!--Title container -->
+        <div class="row">
+            <div class="col s12 center-align"><h1>Kotaku Steamed Scraper</h1></div>
+        </div>
     </div>
+    
+    <div class="container"> <!--body container-->
+        <div class="row">
+            <div class="col s12 center-align"><h2>Articles</h2></div>
+        </div>
+        <div class="row" >
+            <div class ="col s6 center-align" id="articleHolder">
+                
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type ="text/javascript">
+        $.ajax({
+            url:"/scrape",
+            success:function(data){
+                console.log("success");
+                $.ajax({
+                    url:"/articles",
+                    success: function (articles){
+                        console.log(articles)
+                        for (var i=0;i<articles.length;i++){
+                            $("#articleHolder").append(/*"<p> "+articles[i].title + "</p>")*/
+                            `<div class="card">
+                                <div class="card-image waves-effect waves-block waves-light">
+                                  <img class="activator" src="`+articles[i].imgLink+`">
+                                </div>
+                                <div class="card-content">
+                                  <span class="card-title activator grey-text text-darken-4">`+articles[i].title+`<i class="material-icons right">more_vert</i></span>
+                                  <p><a href=`+articles[i].link+`>This is a link to the article</a></p>
+                                </div>
+                                <div class="card-reveal">
+                                  <span class="card-title grey-text text-darken-4">`+articles[i].title+`<i class="material-icons right">close</i></span>
+                                  <p>`+articles[i].content+`</p>
+                                  <div class="input-field col s12">
+                                      <input id="`+articles[i]._id+`" type="text" class="validate">
+                                      <label for="`+articles[i]._id+`">Add a note!</label>
+                                  </div>
+                                  <div id="note`+articles[i]._id+`"></div>
+                                  <a class="btn-floating halfway-fab waves-effect waves-light red" data-id="`+articles[i]._id+`" onclick="submitNote('`+articles[i]._id+`')"><i class="material-icons">add</i></a>
+                                </div>
+                            </div>`
+                        )}
+                    }
+                })
+            }
+        })
+        function submitNote (id){
+            console.log("submit function ran")
+            let data ={note: $("#"+id+"").val()};
+            console.log(data);
+            $.ajax("/update/"+id, {
+                type:"POST",
+                data:data
+            }).then(function(){
+                console.log("update fired");
+                location.reload();
+            }
+                
+            )
+        }
+    </script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script> <!--Reinit dynamically created elements-->
 
+</main>
+<footer class= "page-footer valign-wrapper">
+    <div class="container center-align"> <!--footer container-->
+        <h3>© 2018 Pat Hayes</h3>
+    </div>
+</footer>
 
 
 </body>
