@@ -47,7 +47,7 @@
             success:function(data){
                 console.log("success");
                 $.ajax({
-                    url:"/articles",
+                    url:"/articles/notes",
                     success: function (articles){
                         console.log(articles)
                         for (var i=0;i<articles.length;i++){
@@ -67,11 +67,16 @@
                                       <input id="`+articles[i]._id+`" type="text" class="validate">
                                       <label for="`+articles[i]._id+`">Add a note!</label>
                                   </div>
+                                  <div class="center-align">Notes</div>
                                   <div id="note`+articles[i]._id+`"></div>
                                   <a class="btn-floating halfway-fab waves-effect waves-light red" data-id="`+articles[i]._id+`" onclick="submitNote('`+articles[i]._id+`')"><i class="material-icons">add</i></a>
                                 </div>
-                            </div>`
-                        )}
+                            </div>`//+articles[i].note.body for the note, unfortunately not all have notes.
+                        )
+                            if(articles[i].note.body){
+                                $("#note"+articles[i]._id).text(articles[i].note.body);
+                            }
+                        }
                     }
                 })
             }
