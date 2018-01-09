@@ -18,6 +18,11 @@ var db = require("./models");
 // db.on("error", function(error) {
 //   console.log("Database Error:", error);
 // });
+var exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/steamed2"; //for connecting to heroku, instert this var 2 lines down
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI, {
@@ -33,7 +38,20 @@ app.use(express.static("public"));
 
 // Main route (simple Hello World Message)
 app.get("/", function(req, res) {
-  res.send("Hello world");
+   db.Article
+    .find({})
+    .populate("note")
+    .then(function(doc) {
+      let hbsObject ={
+        article:doc
+      }
+      // If we were able to successfully find Articles, send them back to the client
+      res.render("index", hbsObject);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
 });
 
 // TODO: make two more routes
@@ -148,7 +166,7 @@ app.post("/update/:id", function(req,res){
   db.Note
         .create(result)
         .then(function(dbNote) {
-          console.log("note created");
+          console.log("note created and id: "+req.params.id);
           db.Article.findOneAndUpdate(req.params.id, { $set: { note: dbNote._id } }, { new: true }, function (err, doc) {
               if (err) console.log(err);
               })
