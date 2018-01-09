@@ -1,0 +1,29 @@
+{
+  "name": "kotaku-steamed-scraper",
+  "version": "1.0.0",
+  "description": "utilizing nodejs, cheerio, express, handlebars, request, body-parser, and mongoose; This app will scrape articles from the front page of kotaku's steamed section and store to a database. It also allows users to comment and update comments on each article",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.9",
+    "morgan": "^1.9.0",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PatrickTHayes/kotaku-steamed-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PatrickTHayes/kotaku-steamed-scraper/issues"
+  },
+  "homepage": "https://github.com/PatrickTHayes/kotaku-steamed-scraper#readme"
+}
