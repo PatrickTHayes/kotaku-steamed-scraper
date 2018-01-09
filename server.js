@@ -132,7 +132,7 @@ app.get("/scrape",function (req,res){
         content:content,
         imgLink:imgLink
       }
-      console.log(result)
+      //console.log(result)
       //mongoose code for db
       db.Article
         .create(result)
@@ -167,7 +167,15 @@ app.post("/update/:id", function(req,res){
         .create(result)
         .then(function(dbNote) {
           console.log("note created and id: "+req.params.id);
-          db.Article.findOneAndUpdate(req.params.id, { $set: { note: dbNote._id } }, { new: true }, function (err, doc) {
+          console.log(dbNote);
+          
+          /*db.Article.update({ _id: req.params.id }, { $set: { note: db.Note._id }}, function(err,result2){
+            if (err) throw err;
+            console.log(result2);
+          });*/
+          let queryString=" db.Article.findOneAndUpdate("+req.params.id+", { $set: { note: "+dbNote._id+" } }, { new: true }"
+          console.log(queryString);
+          db.Article.findOneAndUpdate({_id:req.params.id}, { $set: { note: dbNote._id } }, { new: true }, function (err, doc) {
               if (err) console.log(err);
               })
           .then(function(dbArticle){
