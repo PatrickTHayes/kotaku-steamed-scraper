@@ -65,7 +65,33 @@ app.get("/articles", function(req, res) {
       res.json(err);
     });
 });
-
+app.get("/notes", function(req, res) {
+ 
+  db.Note
+    .find({})
+    .then(function(doc) {
+      // If we were able to successfully find Articles, send them back to the client
+      res.json(doc);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+app.get("/articles/notes", function(req, res) {
+ 
+  db.Article
+    .find({})
+    .populate("note")
+    .then(function(doc) {
+      // If we were able to successfully find Articles, send them back to the client
+      res.json(doc);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
 
 // Route 2 scrape and store data
 // =======
@@ -117,10 +143,36 @@ app.get("/scrape",function (req,res){
 })
 app.post("/update/:id", function(req,res){
   console.log("update route hit")
-  db.Article.findByIdAndUpdate(req.params.id, { $set: { note: req.body.note }}, { new: true }, function (err, Article) {
+  console.log(req.body.note)
+  let result={body:req.body.note}
+  db.Note
+        .create(result)
+        .then(function(dbNote) {
+          console.log("note created");
+          db.Article.findOneAndUpdate(req.params.id, { $set: { note: dbNote._id } }, { new: true }, function (err, doc) {
+              if (err) console.log(err);
+              })
+          .then(function(dbArticle){
+            console.log("inside the find and update tag");
+            console.log(dbArticle);
+          });
+          //res.json(dbNote);
+          // If we were able to successfully scrape and save an Article, send a message to the client
+          
+        })
+        .catch(function(err) {
+          // If an error occurred, send it to the client
+          res.json(err);
+        });
+  
+  /*db.Article.update({ _id: req.params.id }, { $set: { note: req.body.note }}, function(){
+    console.log("hit update function");
+  })*/
+  /*db.Article.findByIdAndUpdate(req.params.id, { $set: { note: req.body.note }}, { new: true }, function (err, Article) {
     if (err) return (err);
+    console.log(Article);
     res.send(Article);
-  });
+  });*/
 })
 app.listen(PORT, function() {
   console.log("App running on port: "+ PORT );
