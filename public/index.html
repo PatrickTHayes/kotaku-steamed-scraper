@@ -73,7 +73,7 @@
                                 </div>
                             </div>`//+articles[i].note.body for the note, unfortunately not all have notes.
                         )
-                            if(articles[i].note.body){
+                            if(articles[i].hasOwnProperty('note')){
                                 $("#note"+articles[i]._id).text(articles[i].note.body);
                             }
                         }
